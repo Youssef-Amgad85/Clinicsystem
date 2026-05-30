@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Manage Appointments — ClinicOS{% endblock %}
+{% block page_title %}Manage Appointments{% endblock %}
+
+{% block content %}
+
+<!-- ── Alerts ─────────────────────────────────────────────────────────────── -->
+{% if error_msg %}
+  <div class="alert-custom danger">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <div><strong>Trigger / DB Error:</strong> {{ error_msg }}</div>
+  </div>
+{% endif %}
+{% if success_msg %}
+  <div class="alert-custom success">
+    <i class="bi bi-check-circle-fill"></i>
+    <div>{{ success_msg }}</div>
+  </div>
+{% endif %}
+
+<!-- ── Trigger reference ───────────────────────────────────────────────────── -->
+<div style="
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+  padding:16px 20px;margin-bottom:24px;
+  display:flex;gap:24px;flex-wrap:wrap;
+">
+  <div style="font-size:.75rem;color:var(--slate)">
+    <i class="bi bi-lightning-fill text-warning me-1"></i>
+    <strong>Active Triggers:</strong>
+  </div>
+  <span style="font-size:.75rem;color:var(--muted)">
+    <i class="bi bi-shield-x me-1" style="color:#ef4444"></i>
+    <code>prevent_doctor_overlap</code> — blocks double-booking
+  </span>
+  <span style="font-size:.75rem;color:var(--muted)">
+    <i class="bi bi-percent me-1" style="color:#0d9488"></i>
+    <code>apply_appointment_tax</code> — +10% cost on insert
+  </span>
+  <span style="font-size:.75rem;color:var(--muted)">
+    <i class="bi bi-check2-circle me-1" style="color:#1d4ed8"></i>
+    <code>validate_appointment_status</code> — enforces valid statuses
+  </span>
+</div>
+
+<!-- ── Appointments table ─────────────────────────────────────────────────── -->
+<div class="card">
+  <div class="card-header-custom">
+    <h5><i class="bi bi-calendar3"></i> All Appointments</h5>
+    <span style="font-size:.75rem;color:var(--muted)">{{ appointments | length }} record(s)</span>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="clinic-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Cost (after tax)</th>
+          <th>Diagnosis</th>
+          <th>Status</th>
+          <th>Update Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if appointments %}
+          {% for a in appointments %}
+          <tr>
+            <td style="color:var(--muted);font-size:.8rem">#{{ a.AppointmentID }}</td>
+            <td>
+              <span class="avatar">{{ a.patient_name[0] | upper }}</span>
+              {{ a.patient_name }}
+            </td>
+            <td>
+              <span class="avatar" style="background:#ede9fe;color:#7c3aed">
+                {{ a.doctor_name[0] | upper }}
+              </span>
+              {{ a.doctor_name }}
+            </td>
+            <td>
+              {% if a.Date %}
+                {{ a.Date.strftime('%b %d, %Y') }}
+              {% else %}—{% endif %}
+            </td>
+            <td style="font-size:.8rem;color:var(--slate)">
+              {% if a.StartTime and a.EndTime %}
+                {{ a.StartTime }} – {{ a.EndTime }}
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              {% if a.Cost %}
+                <strong style="color:var(--teal)">
+                  ${{ "%.2f" | format(a.Cost) }}
+                </strong>
+              {% else %}—{% endif %}
+            </td>
+            <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.8rem">
+              {{ a.Diagnosis or '—' }}
+            </td>
+            <td>
+              {% if a.Status == 'Scheduled' %}
+                <span class="status-badge scheduled"><i class="bi bi-clock"></i> Scheduled</span>
+              {% elif a.Status == 'In Progress' %}
+                <span class="status-badge in-progress"><i class="bi bi-play-circle"></i> In Progress</span>
+              {% elif a.Status == 'Postponed' %}
+                <span class="status-badge postponed"><i class="bi bi-pause-circle"></i> Postponed</span>
+              {% else %}
+                <span class="status-badge none">{{ a.Status or '—' }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <!-- Inline status update form -->
+              <form method="POST" action="{{ url_for('appointments') }}" class="status-form">
+                <input type="hidden" name="appointment_id" value="{{ a.AppointmentID }}" />
+                <select name="new_status">
+                  <option value="Scheduled"   {% if a.Status == 'Scheduled'   %}selected{% endif %}>Scheduled</option>
+                  <option value="In Progress" {% if a.Status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                  <option value="Postponed"   {% if a.Status == 'Postponed'   %}selected{% endif %}>Postponed</option>
+                </select>
+                <button type="submit" class="btn-xs">
+                  <i class="bi bi-arrow-repeat"></i> Save
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="9">
+              <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                No appointments found.
+              </div>
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

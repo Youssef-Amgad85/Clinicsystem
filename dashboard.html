@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — ClinicOS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- ── Stat cards ──────────────────────────────────────────────────────────── -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#dbeafe;color:#1d4ed8"><i class="bi bi-people-fill"></i></div>
+      <div>
+        <div class="label">Total Patients</div>
+        <div class="value">{{ total_patients }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#dcfce7;color:#15803d"><i class="bi bi-person-badge-fill"></i></div>
+      <div>
+        <div class="label">Doctors on Staff</div>
+        <div class="value">{{ total_doctors }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#ccfbf1;color:#0d9488"><i class="bi bi-calendar-check"></i></div>
+      <div>
+        <div class="label">Scheduled Today</div>
+        <div class="value">{{ scheduled }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fef9c3;color:#a16207"><i class="bi bi-activity"></i></div>
+      <div>
+        <div class="label">In Progress</div>
+        <div class="value">{{ in_progress }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Patient–Appointment overview ───────────────────────────────────────── -->
+<div class="card">
+  <div class="card-header-custom">
+    <h5><i class="bi bi-table"></i> Patient &amp; Appointment Overview</h5>
+    <span style="font-size:.75rem;color:var(--muted)">LEFT JOIN · Patient ↔ Appointment</span>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="clinic-table">
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Appointment Date</th>
+          <th>Status</th>
+          <th>Appt. ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if rows %}
+          {% for row in rows %}
+          <tr>
+            <td>
+              <span class="avatar">{{ row.patient_name[0] | upper }}</span>
+              {{ row.patient_name }}
+            </td>
+            <td>
+              {% if row.appointment_date %}
+                <i class="bi bi-calendar2 me-1 text-muted"></i>
+                {{ row.appointment_date.strftime('%b %d, %Y') if row.appointment_date else '—' }}
+              {% else %}
+                <span style="color:var(--muted)">No appointment</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if row.Status == 'Scheduled' %}
+                <span class="status-badge scheduled"><i class="bi bi-clock"></i> Scheduled</span>
+              {% elif row.Status == 'In Progress' %}
+                <span class="status-badge in-progress"><i class="bi bi-play-circle"></i> In Progress</span>
+              {% elif row.Status == 'Postponed' %}
+                <span class="status-badge postponed"><i class="bi bi-pause-circle"></i> Postponed</span>
+              {% else %}
+                <span class="status-badge none">—</span>
+              {% endif %}
+            </td>
+            <td style="color:var(--muted)">
+              {% if row.AppointmentID %}#{{ row.AppointmentID }}{% else %}—{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="4"><div class="empty-state"><i class="bi bi-inbox"></i>No records found.</div></td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

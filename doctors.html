@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Doctor Directory — ClinicOS{% endblock %}
+{% block page_title %}Doctor Directory{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <div class="card-header-custom">
+    <h5><i class="bi bi-person-badge"></i> All Doctors</h5>
+    <span style="font-size:.75rem;color:var(--muted)">INNER JOIN · Doctor ↔ Department</span>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="clinic-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Doctor</th>
+          <th>Department</th>
+          <th>Phone</th>
+          <th>Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if doctors %}
+          {% for doc in doctors %}
+          <tr>
+            <td style="color:var(--muted);font-size:.8rem">#{{ doc.DoctorID }}</td>
+            <td>
+              <span class="avatar" style="background:#ede9fe;color:#7c3aed">
+                {{ doc.doctor_name[0] | upper }}
+              </span>
+              <strong>{{ doc.doctor_name }}</strong>
+            </td>
+            <td>
+              <span style="
+                background:#f0fdf4;color:#15803d;
+                padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:600
+              ">
+                <i class="bi bi-building me-1"></i>{{ doc.department_name }}
+              </span>
+            </td>
+            <td>
+              {% if doc.PhoneNumber %}
+                <i class="bi bi-telephone me-1 text-muted"></i>{{ doc.PhoneNumber }}
+              {% else %}
+                <span style="color:var(--muted)">—</span>
+              {% endif %}
+            </td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              {% if doc.Address %}
+                <i class="bi bi-geo-alt me-1 text-muted"></i>{{ doc.Address }}
+              {% else %}
+                <span style="color:var(--muted)">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <i class="bi bi-person-x"></i>
+                No doctors found in the database.
+              </div>
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
