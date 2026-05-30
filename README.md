@@ -11,8 +11,6 @@ This system is engineered to help clinical healthcare facilities digitally trans
 * **Database Objects:** Custom database Views for dynamic scheduling and triggers to automate validation checks.
 * **User-Friendly Access:** Interfaced with a Graphical User Interface (GUI) to remove the barrier of manually writing SQL queries for clinic receptionists.
 
----
-
 ## 2. Repo Structure Explanation
 The repository is organized to separate database definition blueprints, data assets, query configurations, and presentation materials clearly:
 
@@ -21,13 +19,15 @@ The repository is organized to separate database definition blueprints, data ass
 ├── Load data.sql                 # DML Script: Mock datasets used to populate the tables.
 ├── queries.sql                  # Production Queries: Joins, Views, updates, and testing scenarios.
 ├── Clinic management system (2).pptx # Presentation deck summarizing system architecture.
-└── README.md                     # Documentation guidelines (This file).
+└── README.md                     # Documentation guidelines (This file)
+```
 
 ## 3. Installation steps:
+
 -Prerequisites
 Ensure you have an SQL Database Server installed (e.g., MySQL Workbench or a local server instance like XAMPP/WAMP).
 
-Step 1: Initialize the Database Structure (DDL)
+### Step 1: Initialize the Database Structure (DDL)
 Open your SQL workbench or database terminal and connect to your local server.
 
 Open the file Clinicsystem database.sql.
@@ -38,14 +38,14 @@ Create the ClinicSystem schema environment.
 
 Generate the core empty structural entities: Department, Clinic, Doctor, Patient, and Appointment.
 
-Step 2: Populate the Database with Core Assets (DML)
+### Step 2: Populate the Database with Core Assets (DML)
 Open the file Load data.sql in your workspace editor.
 
 Ensure you are targeting the right schema environment by making sure USE ClinicSystem; is active.
 
 Run the script. This inserts your pre-configured mock data records smoothly into the system structures.
 
-Step 3: Run Testing & Production Queries
+### Step 3: Run Testing & Production Queries
 Open the queries.sql script file.
 
 From here, you can run and inspect specific query scenarios line by line to verify structural performance, including:
